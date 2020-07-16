@@ -1,24 +1,27 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Chart from 'react-apexcharts'
+
+var options = {
+  chart: {
+    type: 'curve',
+  },
+  stroke: {
+    curve: 'smooth',
+  },
+  series: [{
+    data: [30,40,35,50,49,60,70,91,125]
+  }],
+}
+
+var series = [{
+  data: [30, 40, 45, 50, 49, 60, 70, 91]
+}]
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <Chart options={options} series={series} type="line" width={500} height={320} />
     </div>
   );
 }
