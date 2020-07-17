@@ -6,8 +6,6 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-    }
 
     var p = [];
     var e = [];
@@ -15,36 +13,37 @@ class App extends React.Component {
 
     var pPercentage = []
 
-    var t = (new Date() - new Date(1995, 11, 4)) / (1000 * 60 * 60 * 24);
+    var t = (new Date() - new Date(2012, 12, 12)) / (1000 * 60 * 60 * 24);
 
-    for (var days = 0; days < 30; days++) {
-      var py = Math.sin((Math.PI * 2 * t / 23) + days)
-      var ey = Math.sin((Math.PI * 2 * t / 28) + days)
-      var iy = Math.sin((Math.PI * 2 * t / 33) + days)
+    for (var days = 0; days < 31; days++) {
+      var py = Math.round(100 * Math.sin((Math.PI * 2 * t / 23) + days + t))
+      var ey = Math.round(100 * Math.sin((Math.PI * 2 * t / 28) + days + t))
+      var iy = Math.round(100 * Math.sin((Math.PI * 2 * t / 33) + days + t))
 
       if (days === 0) {
         var total = py + ey + iy
-        if (py < 0) {
-          pPercentage.push(py * 100 * -1 / total)
-        }
-        else{
-          pPercentage.push(py * 100 / total)
+
+        var percentageP = py * 100 / total;
+        var percentageE = ey * 100 / total;
+        var percentageI = iy * 100 / total;
+
+        if (percentageP < 0) {
+          pPercentage.push(percentageP * -1)
+        } else {
+          pPercentage.push(percentageP)
         }
 
-        if(ey<0){
-          pPercentage.push(ey * 100 * -1/ total)
-        }
-        else{
-          pPercentage.push(ey * 100 / total)
+        if (percentageE < 0) {
+          pPercentage.push(percentageE * -1)
+        } else {
+          pPercentage.push(percentageE)
         }
 
-        if(iy<0){
-          pPercentage.push(iy * 100*-1 / total)
+        if (percentageI < 0) {
+          pPercentage.push(percentageI * -1)
+        } else {
+          pPercentage.push(percentageI)
         }
-        else{
-          pPercentage.push(iy * 100 / total)
-        }
-        
       }
 
       p.push({ x: (Math.PI * 2 * t / 23) + days, y: py })
@@ -130,7 +129,67 @@ class App extends React.Component {
       ],
       iRadial: [
         pPercentage[2]
-      ]
+      ],
+
+      chartStyle: {
+        colors: ['#FFFFFF', '#72DEC2', '#FFB545'],
+        series: [
+          {
+            name: 'Intellectual',
+            data: py,
+          },
+          {
+            name: 'Physical',
+            data: ey,
+          },
+          {
+            name: 'Emotional',
+            data: iy,
+          },
+        ],
+        tooltip: {
+          enabled: true,
+          theme: 'dark',
+          fontFamily: 'Space-Mono, Monospace',
+          x: {
+            show: true,
+          },
+          y: {
+            formatter: function (value) {
+              return `${value}%`;
+            },
+          },
+        },
+        legend: {
+          show: false,
+        },
+        toolbar: {
+          show: false,
+        },
+        grid: {
+          show: false,
+        },
+
+        chart: {
+          id: 'test',
+          height: '100%',
+          parentHeightOffset: 105,
+          sparkline: {
+            enabled: false,
+          },
+          zoom: {
+            enabled: false,
+          },
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          curve: 'straight',
+          lineCap: 'round',
+          width: 10,
+        }
+      }
     }
   }
 
@@ -142,7 +201,7 @@ class App extends React.Component {
           <Chart options={this.state.optionsRadialE} series={this.state.eRadial} type="radialBar" width={200} height={200} />
           <Chart options={this.state.optionsRadialI} series={this.state.iRadial} type="radialBar" width={200} height={200} />
         </div>
-        <Chart options={this.state.options} series={this.state.series} type="line" width={1000} height={320} />
+        <Chart options={this.state.chartStyle} series={this.state.series} type="line" width={1300} height={320} />
       </div>
     );
   }
