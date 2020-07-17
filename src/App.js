@@ -17,16 +17,34 @@ class App extends React.Component {
 
     var t = (new Date() - new Date(1995, 11, 4)) / (1000 * 60 * 60 * 24);
 
-    for (var days = 0; days < 10; days++) {
+    for (var days = 0; days < 30; days++) {
       var py = Math.sin((Math.PI * 2 * t / 23) + days)
       var ey = Math.sin((Math.PI * 2 * t / 28) + days)
       var iy = Math.sin((Math.PI * 2 * t / 33) + days)
 
       if (days === 0) {
-        var total = py+ey+iy
-        pPercentage.push(py*100/total)
-        pPercentage.push(ey*100/total)
-        pPercentage.push(iy*100/total)
+        var total = py + ey + iy
+        if (py < 0) {
+          pPercentage.push(py * 100 * -1 / total)
+        }
+        else{
+          pPercentage.push(py * 100 / total)
+        }
+
+        if(ey<0){
+          pPercentage.push(ey * 100 * -1/ total)
+        }
+        else{
+          pPercentage.push(ey * 100 / total)
+        }
+
+        if(iy<0){
+          pPercentage.push(iy * 100*-1 / total)
+        }
+        else{
+          pPercentage.push(iy * 100 / total)
+        }
+        
       }
 
       p.push({ x: (Math.PI * 2 * t / 23) + days, y: py })
