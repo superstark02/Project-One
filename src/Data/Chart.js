@@ -53,7 +53,7 @@ export default function LineChart() {
             .selectAll(".line")
             .data(nested)
             .join("path")
-            .attr("d", segment)
+            .attr("d", myLine)
             .attr("stroke", "blue")
             .attr("fill", "none")
             .attr("border-radius", 10);
@@ -74,6 +74,7 @@ export default function LineChart() {
     return (
         <React.Fragment>
             <svg ref={svgRef} style={{ backgroundColor: 'lightgrey' }} >
+                <g className="segment" ></g>
             </svg>
         </React.Fragment>
     )
