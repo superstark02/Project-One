@@ -8,54 +8,55 @@ export default function MultiLineChart() {
     useEffect(() => {
         generateData();
 
-        var margin = { top: 10, right: 40, bottom: 150, left: 70 },
-            width = 760 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
+        const svg = d3.select(svgRef.current)
 
-        var w = width + margin.left + margin.right;
-        var h = height + margin.top + margin.bottom;
+        const xScale = d3.scaleLinear()
+            .domain([0, data.length - 1])
+            .range([0, 1500])
 
-        var svg = d3.select("body").append("svg") // this appends a new SVG element to body
-            .attr("width", w) // set the width 
-            .attr("height", h) // set the height
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        // x scale will handle time
-        var xScale = d3.scaleBand().range([0, width]).padding(0.1);
-
-
-        // y scale will handle energy consumption values
-        var yScale = d3.scaleLinear().range([height, 0]);
-
-        // line generator function
-        const y = d3.scaleLinear()
+        const yScale = d3.scaleLinear()
             .domain([-1, 1])
             .range([150, 0])
 
+        const xAxis = d3.axisBottom(xScale);
+        svg.select(".x-axis")
+            .style("transform", "translateY(150px)")
+            .call(xAxis)
 
-        var line = d3.line()
-            .curve(d3.curveBasis)
-            .x(function (d) { return xScale(d.value); })
-            .y(y)
+        const yAxis = d3.axisLeft(yScale);
+        svg.select(".y-axis")
+            .call(yAxis)
 
-        var countries = d3.nest()
-            .key(function (d) { return d.key; })
+        const myLine = d3.line()
+            .x((value, index) => xScale(index))
+            .y(yScale)
+            .curve(d3.curveCardinal)
+
+        const nested = d3.nest()
+            .key(function (d) { return d.key })
             .entries(data);
 
-        console.log(countries);
+        console.log(nested)
 
-        yScale.domain([-1, 1]);
-        xScale.domain([0, 30]);
+        var segment = svg.selectAll(".segment")
+            .data(data)
+            .enter().append("g")
+            .attr("class", "segment");
 
-        svg.selectAll("path")
-            .data(countries)
-            .enter()
-            .append("path")
+        segment.append("path")
             .attr("class", "line")
-            .attr("d", function (d) {
-                return line(d.values);
-            });
+            .attr("id", function (d) { return d.key; })
+            .attr("visible", 1)
+            .attr("d", function (d) { return d3.line(d.key); })
+
+        svg
+            .selectAll(".line")
+            .data(nested)
+            .join("path")
+            .attr("d", myLine)
+            .attr("stroke", "blue")
+            .attr("fill", "none")
+            .attr("border-radius", 10);
 
     }, [data])
 
@@ -63,17 +64,16 @@ export default function MultiLineChart() {
 
         for (var i = 0; i < 31; i++) {
             var p = Math.sin(2 * Math.PI * (2000 + i) / 23)
-            data.push({ key: 'p', value: p })
+            data.push(p)
 
-            var e = Math.sin(2 * Math.PI * (2000 + i) / 33)
-            data.push({ key: "e", value: e })
+            var e = Math.sin(2*Math.PI*(2000+i)/33)
+            data.push({key:"e",value:e})
         }
     }
 
     return (
         <React.Fragment>
             <svg ref={svgRef} style={{ backgroundColor: 'lightgrey' }} >
-                <g className="segment" ></g>
             </svg>
         </React.Fragment>
     )

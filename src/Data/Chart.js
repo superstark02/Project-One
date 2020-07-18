@@ -51,7 +51,7 @@ export default function LineChart() {
 
         svg
             .selectAll(".line")
-            .data(nested)
+            .data([data])
             .join("path")
             .attr("d", myLine)
             .attr("stroke", "blue")
